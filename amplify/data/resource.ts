@@ -11,6 +11,7 @@ const schema = a.schema({
         .model({
             content: a.string(),
             completed: a.boolean(),
+            priority: a.integer(),
         })
         .authorization((allow) => [allow.publicApiKey()]),
 })

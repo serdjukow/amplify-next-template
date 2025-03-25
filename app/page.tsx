@@ -27,8 +27,14 @@ export default function App() {
 
     function createTodo() {
         const content = window.prompt("Todo content")
+        const priority = Number(window.prompt("Todo priority (1-5)"))
+
         if (content) {
-            client.models.Todo.create({ content, completed: false })
+            client.models.Todo.create({
+                content,
+                completed: false,
+                priority: priority || 1,
+            })
         }
     }
 
@@ -54,10 +60,12 @@ export default function App() {
             <ul>
                 {todos.map((todo) => (
                     <li key={todo.id} style={{ display: "flex", justifyContent: "space-between", gap: "1em", alignItems: "center" }}>
-                        <input type="checkbox" checked={todo.completed} onChange={() => toggleCompleted(todo.id, todo.completed)} />
-                        {todo.content}
+                        <input type="checkbox" checked={!!todo.completed} onChange={() => toggleCompleted(todo.id, !!todo.completed)} />
+                        <span style={{ textDecoration: todo.completed ? "line-through" : "none" }}>
+                            {todo.content} (Priority: {todo.priority ?? "N/A"})
+                        </span>
                         <div style={{ display: "flex", justifyContent: "space-between", gap: ".5em" }}>
-                            <button style={{ backgroundColor: "green" }} onClick={() => updateTodo(todo.id)}>
+                            <button style={{ backgroundColor: "green" }} onClick={() => updateTodo(todo.id)} disabled={!!todo.completed}>
                                 Edit
                             </button>
                             <button style={{ backgroundColor: "tomato" }} onClick={() => deleteTodo(todo.id)}>
@@ -67,11 +75,6 @@ export default function App() {
                     </li>
                 ))}
             </ul>
-            <div>
-                🥳 App successfully hosted. Try creating a new todo.
-                <br />
-                <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">Review next steps of this tutorial.</a>
-            </div>
         </main>
     )
 }
